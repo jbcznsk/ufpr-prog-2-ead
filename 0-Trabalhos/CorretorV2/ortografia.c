@@ -23,7 +23,7 @@ int main ()
 	dicionario = carregaDicionario(dic, &tamanho_dicionario);
     
 	// Ordena o dicionário, sem ser "case-sensitive"
-	qsort(dicionario, tamanho_dicionario, sizeof(char*), funcaoComparacao); 
+	qsort(dicionario, tamanho_dicionario, sizeof(String), funcaoComparacao); 
    
 	// Acha as palavras que não existem no dicionário e bota elas entre []
 	processaTexto(dicionario, tamanho_dicionario);
@@ -35,5 +35,6 @@ int main ()
 
 	// Fecha o arquivo
 	fclose (dic); 
+	
 	return (0);
 }

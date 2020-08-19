@@ -24,3 +24,4 @@ diff meus-testes/m-saida-montesquieu.txt saidas/montesquieu-saida.txt
 rm -rf meus-testes
 
 make clean
+make purge

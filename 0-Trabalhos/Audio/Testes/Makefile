@@ -2,5 +2,6 @@ CC = gcc
 CFLAGS= -Wall
 
 
-wavinfo: wav.o
-	gcc 
+clean:
+	rm -f *.o
+	rm wavinfo

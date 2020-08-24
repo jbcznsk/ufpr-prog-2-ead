@@ -2,8 +2,9 @@
 #include <stdlib.h>
 #include <stdint.h>
 #include <inttypes.h>
+#include <getopt.h>
 
-struct Cabecalho_s 
+struct Cabecalho_s
 {
 	struct RIFF_s {
 		char     ChunkID    [4];
@@ -34,4 +35,6 @@ Cabecalho_t ler_cabecalho_wav(FILE *ENTRADA);
 
 void printTag(char *tagName, char *tag, int tam);
 
-void print_cabecalho_wav(Cabecalho_t cab_wav);
+void imprimir_cabecalho_wav(Cabecalho_t cab_wav);
+
+int16_t *ler_musica(FILE *ENTRADA, Cabecalho_t cab_wav);

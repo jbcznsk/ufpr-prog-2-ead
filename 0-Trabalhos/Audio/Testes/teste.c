@@ -16,13 +16,13 @@ int main(int argc, char **argv)
 
 	fwrite(&cabecalho, sizeof(Cabecalho_t), 1, saida1);
 
-	print_cabecalho_wav(cabecalho);
+	imprimir_cabecalho_wav(cabecalho);
 
 	int16_t *musica, *rev;
 
 	musica = malloc(cabecalho.data.SubChunk2Size);
 	rev = malloc(cabecalho.data.SubChunk2Size);
-	
+
 	if (!musica){
 		printf("deu ruim\n");
 		exit(1);
@@ -32,11 +32,11 @@ int main(int argc, char **argv)
 
 	fread(musica,sizeof(int16_t),cabecalho.data.SubChunk2Size/2,stdin);
 
-	
+
 	/* VOLUME  */
-	// for (int i = 0; i < cabecalho.data.SubChunk2Size/2; i++){
-	// 	musica[i] *= 5;
-	// }
+	for (int i = 0; i < cabecalho.data.SubChunk2Size/2; i++){
+		musica[i] *= 2;
+	}
 
 	/* REVERSÃO */
 	// printf("Reversão\n");
@@ -46,7 +46,7 @@ int main(int argc, char **argv)
 
 
 	fwrite(&cabecalho, sizeof(Cabecalho_t), 1, saida2);
-	fwrite(rev, sizeof(int16_t), cabecalho.data.SubChunk2Size/2, saida2);
+	fwrite(musica, sizeof(int16_t), cabecalho.data.SubChunk2Size/2, saida2);
 /*
 	for (uint32_t i = 0;i < cabecalho.data.SubChunk2Size/16; i++){
 		printf("%"PRIu16, musica[i]);

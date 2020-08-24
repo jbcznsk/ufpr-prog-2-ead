@@ -1,52 +1,57 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdint.h>
-#include <inttypes.h>
+#include "wav.h"
 #include <getopt.h>
 
-#define INPUT "music.wav"
-
-struct Cabecalho_s 
-{
-	char     RIFF_ChunkID    [4];
-	uint32_t RIFF_ChunkSize     ;
-	char     RIFF_Format     [4];
-
-	char     fmt_SubChunk1ID [4];
-	uint32_t fmt_SubChunk1Size  ;
-	uint16_t fmt_AudioFormat    ;
-	uint16_t fmt_NrChannels     ;
-	uint32_t fmt_SampleRate     ;
-	uint32_t fmt_ByteRate       ;
-	uint16_t fmt_BlockAling     ;
-	uint16_t fmt_BitsPerSample  ;
-
-	char     data_SubChunk2ID[4];
-	uint32_t data_SubChunk2Size ;
-
-};
-
-typedef struct Cabecalho_s Cabecalho_t;
 
 int main(int argc, char **argv)
 {
 
-	FILE *musica;
+	FILE *saida1, *saida2;
 
 	Cabecalho_t cabecalho;
 
-	musica = fopen(INPUT, "r+");
+	fread(&cabecalho, sizeof(Cabecalho_t), 1, stdin);
 
-	fread(&cabecalho, sizeof(Cabecalho_t), 1, musica);
+	saida1 = fopen("saida1", "w+");
+	saida2 = fopen("saida2", "w+");
 
-	//puts(cabecalho.RIFF_ChunkID);
-	for (int i = 0;i < 4;i++)
-		putc(cabecalho.RIFF_ChunkID[i],stdout);
+	fwrite(&cabecalho, sizeof(Cabecalho_t), 1, saida1);
 
-	printf("%"PRIu32"\n", cabecalho.RIFF_ChunkSize);
+	print_cabecalho_wav(cabecalho);
 
-	fclose(musica);
+	int16_t *musica, *rev;
+
+	musica = malloc(cabecalho.data.SubChunk2Size);
+	rev = malloc(cabecalho.data.SubChunk2Size);
+	
+	if (!musica){
+		printf("deu ruim\n");
+		exit(1);
+	}
+
+	//int16_t musica [cabecalho.data.SubChunk2Size/2];
+
+	fread(musica,sizeof(int16_t),cabecalho.data.SubChunk2Size/2,stdin);
 
 	
+	/* VOLUME  */
+	// for (int i = 0; i < cabecalho.data.SubChunk2Size/2; i++){
+	// 	musica[i] *= 5;
+	// }
+
+	/* REVERSÃO */
+	// printf("Reversão\n");
+	// for (int i = 0; i < cabecalho.data.SubChunk2Size/2; i++){
+	// 	rev[i] = musica[(cabecalho.data.SubChunk2Size/2)-i-1];
+	// }
+
+
+	fwrite(&cabecalho, sizeof(Cabecalho_t), 1, saida2);
+	fwrite(rev, sizeof(int16_t), cabecalho.data.SubChunk2Size/2, saida2);
+/*
+	for (uint32_t i = 0;i < cabecalho.data.SubChunk2Size/16; i++){
+		printf("%"PRIu16, musica[i]);
+	}
+*/
+	//free(musica);
 	return 0;
 }

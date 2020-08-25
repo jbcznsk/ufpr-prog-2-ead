@@ -19,7 +19,7 @@ String *carregaDicionario(FILE *dic, unsigned long int *contador){
 	fscanf(dic, "%ms", &p[*contador]);					 // Lê a primeira palavra
 	while(p[*contador] != NULL)							 // Continua lendo as palavras até chegar no NULL
 	{
-		(*contador)++;									 // Aumenta o número de palavras lidas   
+		(*contador)++;									 // Aumenta o número de palavras lidas
 		if ((*contador) >= iteracao*MAX_PALAVRAS)		 // Caso o número de palavras ultrapasse o número de alocações
 		{
 			iteracao++;									 // Aumenta a quantidade de vezes que foi feita a realocação
@@ -32,15 +32,16 @@ String *carregaDicionario(FILE *dic, unsigned long int *contador){
 }
 
 int funcaoComparacao(const void *p1,const void *p2) {
-	return strcasecmp(*(char **) p1, *(char **) p2);       
+	return strcasecmp(*(char **) p1, *(char **) p2);
 }
 
 void processaTexto(String *dicionario, int tamanho_dicionario){
 
 	int contador;
-	char *palavra, c;
+	String palavra;
+	char c;
 
-	palavra = (char*) malloc (TAM_PALAVRA*sizeof(char)); // Aloca a palavra que será usada como comparação
+	palavra = (String) malloc (TAM_PALAVRA*sizeof(char)); // Aloca a palavra que será usada como comparação
 	if (!palavra) // Verifica se foi alocada corretamente
 	{
 		perror("MALLOC FAILED");
@@ -55,7 +56,7 @@ void processaTexto(String *dicionario, int tamanho_dicionario){
 
 	contador = 0;
 	c = getchar();
-	while(c != EOF){   
+	while(c != EOF){
 		while(!isalpha(c) && c != EOF){
 			printf("%c", c);
 			c = getchar();
@@ -66,7 +67,7 @@ void processaTexto(String *dicionario, int tamanho_dicionario){
 		}
 		palavra[contador] = '\0';
 		if (strcmp(palavra, "")){
-			if (bsearch(&palavra,dicionario,tamanho_dicionario,sizeof(char*),funcaoComparacao))
+			if (bsearch(&palavra,dicionario,tamanho_dicionario,sizeof(String),funcaoComparacao))
 				printf("%s", palavra);
 			else
 				printf("[%s]", palavra);

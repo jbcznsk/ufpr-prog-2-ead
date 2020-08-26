@@ -19,11 +19,11 @@ int main ()
 	dic = fopen("/usr/share/dict/brazilian", "r");
 	if (!dic)
 	{
-		fprintf(stderr,"Dicionário não encontrado em /usr/share/brazilian, procurando no diretório local\n");
+		fprintf(stderr,"Dicionario nao encontrado em /usr/share/brazilian, procurando no diretorio local\n");
 		dic = fopen("brazilian", "r");
 		if (!dic)
 		{
-			fprintf(stderr,"Dicionário não encontrado no diretório local, encerrando o programa\n");
+			fprintf(stderr,"Dicionario nao encontrado no diretorio local, encerrando o programa\n");
 			exit(1);
 		}
 	}

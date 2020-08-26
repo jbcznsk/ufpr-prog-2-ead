@@ -18,6 +18,8 @@ String *carregaDicionario(FILE *dic, unsigned long int *contador);
 
 int funcaoComparacao(const void *p1, const void *p2);
 
-void processaTexto(String *dicionario, int tamanho_dicionario);
+void processaTexto(String *dicionario, unsigned long int tamanho_dicionario);
+
+void desalocaDicionario(String *dicionario, unsigned long int tamanho_dicionario);
 
 #endif

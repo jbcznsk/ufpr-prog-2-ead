@@ -1,9 +1,11 @@
-#include "dicionario.h"
+// GRR20190372 Jorge Lucas Vicilli Jabczenski
 
+#include "dicionario.h"
 
 int main ()
 {
-	setlocale (LC_ALL, "pt_BR.ISO-8859-1") ; // Configura o locale para ISO-8859-1
+	// Configura o locale para ISO-8859-1
+	setlocale (LC_ALL, "pt_BR.ISO-8859-1") ;
 
 /*=====================================================================================*/
 
@@ -12,10 +14,11 @@ int main ()
 	unsigned long int tamanho_dicionario;
 
 /*=====================================================================================*/
-/*                                                                                     */
-	dic = fopen("/usr/share/dict/brazilian", "r"); // Abre o dicionario
-	if (!dic) // Teste para verificar se o dicionario foi aberto com sucesso
-	{ 
+
+	// Abre o dicionario
+	dic = fopen("/usr/share/dict/brazilian", "r");
+	if (!dic)
+	{
 		fprintf(stderr,"Dicionário não encontrado em /usr/share/brazilian, procurando no diretório local\n");
 		dic = fopen("brazilian", "r");
 		if (!dic)
@@ -23,25 +26,22 @@ int main ()
 			fprintf(stderr,"Dicionário não encontrado no diretório local, encerrando o programa\n");
 			exit(1);
 		}
-		
 	}
 
 	// Dicionario carregado em RAM
 	dicionario = carregaDicionario(dic, &tamanho_dicionario);
-    
+
 	// Ordena o dicionário, sem ser "case-sensitive"
-	qsort(dicionario, tamanho_dicionario, sizeof(String), funcaoComparacao); 
-   
+	qsort(dicionario, tamanho_dicionario, sizeof(String), funcaoComparacao);
+
 	// Acha as palavras que não existem no dicionário e bota elas entre []
 	processaTexto(dicionario, tamanho_dicionario);
 
 	// Desaloca todo o espaço usado
-	for (int i = 0; i  < tamanho_dicionario; i++)
-		free(dicionario[i]);
-	free(dicionario);
+	desalocaDicionario(dicionario, tamanho_dicionario);
 
 	// Fecha o arquivo
-	fclose (dic); 
-	
+	fclose (dic);
+
 	return (0);
 }

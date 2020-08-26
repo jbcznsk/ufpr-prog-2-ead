@@ -35,7 +35,7 @@ int funcaoComparacao(const void *p1,const void *p2) {
 	return strcasecmp(*(char **) p1, *(char **) p2);
 }
 
-void processaTexto(String *dicionario, int tamanho_dicionario){
+void processaTexto(String *dicionario, unsigned long int tamanho_dicionario){
 
 	int contador;
 	String palavra;
@@ -47,10 +47,7 @@ void processaTexto(String *dicionario, int tamanho_dicionario){
 		perror("MALLOC FAILED");
 
 		// Desaloca todo o espaço usado
-		for (int i = 0; i  < tamanho_dicionario; i++)
-			free(dicionario[i]);
-		free(dicionario);
-
+		desalocaDicionario(dicionario, tamanho_dicionario);
 		exit(1);
 	}
 
@@ -75,4 +72,12 @@ void processaTexto(String *dicionario, int tamanho_dicionario){
 		}
 	}
 	free(palavra);
+}
+
+void desalocaDicionario(String *dicionario, unsigned long int tamanho_dicionario){
+
+	for (unsigned long int i = 0; i < tamanho_dicionario; i++)
+		free(dicionario[i]);
+	free(dicionario);
+
 }

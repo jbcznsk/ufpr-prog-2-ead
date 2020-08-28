@@ -3,8 +3,8 @@
 int main(int argc, char **argv){
 
   FILE *ENTRADA = stdin, *SAIDA = stdout;
-  int opt;
-  int level = 1;
+  int opt, tamMusica;
+  float level = 1.0;
   Cabecalho_t cab_wav;
   int16_t *musica;
 
@@ -41,12 +41,9 @@ int main(int argc, char **argv){
   }
 
   cab_wav = ler_cabecalho_wav(ENTRADA);
-  imprimir_cabecalho_wav(cab_wav);
   musica = ler_musica(ENTRADA, cab_wav);
-  printf("Leitura de msuica feita\n");
 
-  int tamMusica = (cab_wav.data.SubChunk2Size)/(cab_wav.fmt.BitsPerSample/8);
-  printf("Tamanho musica %d\n",tamMusica);
+  tamMusica = (cab_wav.data.SubChunk2Size)/(cab_wav.fmt.BitsPerSample/8);
 
   for (int i = 0; i < tamMusica; i++)
   {
@@ -64,9 +61,9 @@ int main(int argc, char **argv){
   fwrite(&cab_wav, sizeof(Cabecalho_t),1, SAIDA);
   fwrite(musica, sizeof(int16_t),(cab_wav.data.SubChunk2Size)/(cab_wav.fmt.BitsPerSample/8), SAIDA);
 
-  // fclose(ENTRADA);
-  // fclose(SAIDA);
-  // free(musica);
+   fclose(ENTRADA);
+   fclose(SAIDA);
+   free(musica);
 
   return 0;
 }

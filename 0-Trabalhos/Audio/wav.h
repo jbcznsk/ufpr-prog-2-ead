@@ -39,11 +39,12 @@ struct Musica_s
 };
 typedef struct Musica_s Musica_t;
 
-Cabecalho_t ler_cabecalho_wav(FILE *ENTRADA);
+void ler_cabecalho_wav(FILE *ENTRADA, Musica_t *msc);
 
-void printTag(char *tagName, char *tag, int tam);
+// Função auxiliar para imprimir_cabecalho_wav
+static void printTag(char *tagName, char *tag, int tam);
 
-void imprimir_cabecalho_wav(Cabecalho_t cab_wav);
+void imprimir_cabecalho_wav(Musica_t msc);
 
 //int16_t *ler_musica(FILE *ENTRADA, Cabecalho_t cab_wav);
-void ler_musica(FILE *ENTRADA, Musica_t msc);
+void ler_musica(FILE *ENTRADA, Musica_t *msc);

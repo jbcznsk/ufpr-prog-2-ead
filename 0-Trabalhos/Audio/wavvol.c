@@ -1,11 +1,12 @@
-#include "wav.h"
+#include "acesso.h"
+#include "tratamento.h"
 
 int main(int argc, char **argv){
 
 	FILE *ENTRADA = stdin, *SAIDA = stdout;
 	int opt;
-	float level = 1.0;
 	Musica_t *musica;
+	float level = 1.0;
 
 /*===================================================*/
 
@@ -57,24 +58,12 @@ int main(int argc, char **argv){
 		exit(1);
 	}
 
-	ler_cabecalho_wav(ENTRADA, musica);
-	ler_musica(ENTRADA, musica);
-
+	ler_musica_wav(ENTRADA, musica);
 
 	// Ajuste do volume, respeitando os valores máximos
-	for (int i = 0; i < musica->tamanho; i++){
+	ajustar_volume(musica, level);
 
-		if (musica->dados[i] * level >= VOLMAX)
-			musica->dados[i] = VOLMAX;
-		else if (musica->dados[i] * level <= -VOLMAX)
-			musica->dados[i]=  -VOLMAX;
-		else 
-			musica->dados[i] *= level;
-	}
-
-
-	fwrite(&musica->cab, sizeof(Cabecalho_t),1, SAIDA);
-	fwrite(musica->dados, sizeof(int16_t),musica->tamanho, SAIDA);
+	envia_musica(SAIDA, musica);
 
 	fclose(ENTRADA);
 	fclose(SAIDA);

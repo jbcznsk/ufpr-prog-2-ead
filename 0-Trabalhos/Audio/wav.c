@@ -1,22 +1,20 @@
 #include "wav.h"
 
-void ler_cabecalho_wav(FILE *ENTRADA, Musica_t *msc){
-
+void ler_cabecalho_wav(FILE *ENTRADA, Musica_t *msc)
+{
     fread(&msc->cab, sizeof(Cabecalho_t),1,ENTRADA);
-
-    // Cabecalho_t cab_waw;
-    // fread(&cab_waw, sizeof(Cabecalho_t),1,ENTRADA);
-    // return cab_waw;
 }
 
-void printTag(char *tagName, char *tag, int tam){
+void printTag(char *tagName, char *tag, int tam)
+{
 	printf("%s       : \"", tagName);
 	for (int i = 0; i < tam; i++)
 		putc(tag[i], stdout);
 	fprintf(stdout, "\"\n");
 }
 
-void imprimir_cabecalho_wav(Musica_t msc){
+void imprimir_cabecalho_wav(Musica_t msc)
+{
 
 	printTag("riff tag", msc.cab.RIFF.ChunkID,4);
 	printf("riff size      : %"PRIu32"\n", msc.cab.RIFF.ChunkSize);
@@ -36,6 +34,19 @@ void imprimir_cabecalho_wav(Musica_t msc){
 
 }
 
-void ler_musica(FILE *ENTRADA, Musica_t *msc){
+void ler_musica(FILE *ENTRADA, Musica_t *msc)
+{
+
+    msc->dados = malloc (msc->cab.data.SubChunk2Size);
+    if (!msc->dados)
+    {
+        fprintf(stderr, "Erro ao alocar espaço para a música\n");
+        exit(1);
+    }
+
+    msc->tamanho = (msc->cab.data.SubChunk2Size)/(msc->cab.fmt.BitsPerSample/8);
+    //printf("%d\n",msc->tamanho);
+
+    fread(msc->dados,sizeof(int16_t),msc->tamanho,ENTRADA);
 
 }

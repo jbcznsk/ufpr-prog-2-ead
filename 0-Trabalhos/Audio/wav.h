@@ -4,6 +4,8 @@
 #include <inttypes.h>
 #include <getopt.h>
 
+#define VOLMAX 32000
+
 struct Cabecalho_s
 {
 	struct RIFF_s {
@@ -34,15 +36,15 @@ typedef struct Cabecalho_s Cabecalho_t;
 struct Musica_s
 {
 	Cabecalho_t cab;
-	int16_t *dados;
 	int tamanho;
+	int16_t *dados;
 };
 typedef struct Musica_s Musica_t;
 
 void ler_cabecalho_wav(FILE *ENTRADA, Musica_t *msc);
 
 // Função auxiliar para imprimir_cabecalho_wav
-static void printTag(char *tagName, char *tag, int tam);
+void printTag(char *tagName, char *tag, int tam);
 
 void imprimir_cabecalho_wav(Musica_t msc);
 

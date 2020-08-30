@@ -35,7 +35,7 @@ int main(int argc, char **argv){
 			break;
 
 			default:
-				fprintf(stderr, "Usage: ./wavinfo -i [FILE]\n");
+				fprintf(stderr, "Usage: ./wavnorm -i [FILE] -o [FILE]\n");
 				exit(1);
 		}
 	}

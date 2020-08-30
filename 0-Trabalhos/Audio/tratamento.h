@@ -21,12 +21,14 @@ void troca(int16_t *a, int16_t *b);
 void reverter_musica(Musica_t *msc);
 
 // Eco
+void ecoar(Musica_t *msc, float level, int delay);
 
 // Estereo Ampliado
+int confere_dois_canais(Musica_t *msc);
+void estereo_amplificado(Musica_t *msc, int k);
 
 // Concatenar
 
 // Mistura
-
 
 #endif

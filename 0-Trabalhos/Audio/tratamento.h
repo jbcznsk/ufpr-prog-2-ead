@@ -2,6 +2,7 @@
 #define __TRATAMENTO__
 
 #include "estruturas.h"
+#include <string.h>
 
 // Função auxiliar para imprimir_cabecalho_wav
 void printTag(char *tagName, char *tag, int tam);
@@ -27,8 +28,13 @@ void ecoar(Musica_t *msc, float level, int delay);
 int confere_dois_canais(Musica_t *msc);
 void estereo_amplificado(Musica_t *msc, int k);
 
-// Concatenar
+// Função auxiliar utilizada em "concatenar" e "mixar"
+int musicas_compativeis(Musica_t *mscA, Musica_t *mscB);
 
-// Mistura
+// Retorna a concatenação das duas músicas na música A
+void concatatenar_musicas(Musica_t *mscA, Musica_t *mscB);
+
+// Retorna a mixagem nas duas músicas na mscA
+void mixar_musicas(Musica_t *mscA, Musica_t *mscB);
 
 #endif

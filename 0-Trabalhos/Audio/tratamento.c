@@ -1,6 +1,26 @@
 #include <stdio.h>
 #include "tratamento.h"
 
+int16_t soma_com_limite(int16_t a, int16_t b, int16_t lim)
+{
+	if ((a + b) > lim)
+		return (lim);
+	else if ((a + b) < -lim)
+		return (-lim);
+	else
+		return a + b;
+}
+
+int16_t mult_com_limite(int16_t a, float b, int16_t lim)
+{
+	if ((a * b) > lim)
+		return (lim);
+	else if ((a * b) < -lim)
+		return (-lim);
+	else
+		return a * b;
+}
+
 void printTag(char *tagName, char *tag, int tam)
 {
 	printf("%s       : \"", tagName);
@@ -39,33 +59,22 @@ void envia_musica(FILE *SAIDA, Musica_t *msc)
 void ajustar_volume(Musica_t *msc, float level)
 {
 	for (int i = 0; i < msc->tamanho; i++)
-	{
-		if (msc->dados[i] * level >= VOLMAX)
-			msc->dados[i] = VOLMAX;
-		else if (msc->dados[i] * level <= -VOLMAX)
-			msc->dados[i] = -VOLMAX;
-		else
-			msc->dados[i] *= level;
-	}
+		msc->dados[i] = mult_com_limite(msc->dados[i], level, VOLMAX);
 }
 
 void normalizar_volume(Musica_t *msc)
 {
 	int16_t valorAtual, maiorValor = 0;
 
+	// Acha o maior valor absoluto
 	for (int i = 0; i < msc->tamanho; i++)
 	{
 		valorAtual = abs(msc->dados[i]);
 		if (valorAtual > maiorValor)
-		{
 			maiorValor = valorAtual;
-		}
 	}
 
 	float level = (float)VOLMAX / (float)maiorValor;
-
-	printf("%d\n", maiorValor);
-	printf("%.2f\n", level);
 	ajustar_volume(msc, level);
 }
 
@@ -79,28 +88,19 @@ void troca(int16_t *a, int16_t *b)
 void reverter_musica(Musica_t *msc)
 {
 	for (int i = 0; i < msc->tamanho / 2; i++)
-	{
 		troca(&msc->dados[i], &msc->dados[msc->tamanho - 1 - i]);
-	}
 }
 
 void ecoar(Musica_t *msc, float level, int delay)
 {
 	int pontoInicial;
-	uint32_t amostragem = msc->cab.fmt.SampleRate;
+	uint32_t amostragem;
 
+	amostragem = msc->cab.fmt.SampleRate;
 	pontoInicial = amostragem * delay / 1000;
 
 	for (int i = pontoInicial; i < msc->tamanho; i++)
-	{
-		int64_t novoSample = msc->dados[i] + level * msc->dados[i - pontoInicial];
-		if (novoSample > VOLMAX)
-			msc->dados[i] = VOLMAX;
-		else if (novoSample < -VOLMAX)
-			msc->dados[i] = -VOLMAX;
-		else
-			msc->dados[i] = novoSample;
-	}
+		msc->dados[i] = soma_com_limite(msc->dados[i], level * msc->dados[i - pontoInicial], VOLMAX);
 }
 
 int confere_dois_canais(Musica_t *msc)
@@ -116,8 +116,8 @@ void estereo_amplificado(Musica_t *msc, int k)
 	for (int i = 0; i < msc->tamanho; i += 2)
 	{
 		diff = msc->dados[i + 1] - msc->dados[i];
-		msc->dados[i + 1] += k * diff; // Canal direito
-		msc->dados[i] -= k * diff;	   // Canal esquerdo
+		msc->dados[i + 1] = soma_com_limite(msc->dados[i + 1], k * diff, VOLMAX); // Canal direito
+		msc->dados[i] = soma_com_limite(msc->dados[i + 1], -(k * diff), VOLMAX);  // Canal esquerdo
 	}
 }
 
@@ -192,22 +192,21 @@ void mixar_musicas(Musica_t *mscA, Musica_t *mscB)
 		exit(1);
 	}
 
+	// Começa assumindo que o audio B é menor
 	int menor = mscB->tamanho;
 
+	// Caso não seja, arruma o audio A para que ele comporte o tamanho de B
 	if (mscA->tamanho < mscB->tamanho)
 	{
 		menor = mscA->tamanho;
+		mscA->tamanho = mscB->tamanho;
 		mscA->cab = mscB->cab;
 		mscA->dados = realloc(mscA->dados, mscB->cab.data.SubChunk2Size);
-		for (int i = mscA->tamanho; i < mscB->tamanho; i++)
-		{
+
+		for (int i = menor; i < mscB->tamanho; i++)
 			mscA->dados[i] = mscB->dados[i];
-		}
-		mscA->tamanho = mscB->tamanho;
 	}
 
 	for (int i = 0; i < menor; i++)
-	{
-		mscA->dados[i] += mscB->dados[i];
-	}
+		mscA->dados[i] = soma_com_limite(mscA->dados[i], mscB->dados[i], VOLMAX);
 }

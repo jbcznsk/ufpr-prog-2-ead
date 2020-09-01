@@ -4,6 +4,11 @@
 #include "estruturas.h"
 #include <string.h>
 
+// Realiza uma operação com os valores limites de +- limite
+// int op_com_limite(int op, int16_t a, int16_t b, int16_t lim);
+int16_t soma_com_limite(int16_t a, int16_t b, int16_t lim);
+int16_t mult_com_limite(int16_t a, float b, int16_t lim);
+
 // Função auxiliar para imprimir_cabecalho_wav
 void printTag(char *tagName, char *tag, int tam);
 void imprimir_cabecalho_wav(Musica_t *msc);

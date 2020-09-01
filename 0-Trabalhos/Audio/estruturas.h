@@ -9,6 +9,11 @@
 // Valor divertido :)
 #define VOLMAX 32323
 
+// Operaçoes
+#define SOMA 1
+#define SUBT 2
+#define MULT 3
+
 struct Cabecalho_s
 {
 	struct RIFF_s

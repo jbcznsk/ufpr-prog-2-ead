@@ -2,7 +2,7 @@ CC = gcc
 CFLAGS = -Wall -g -pedantic
 
 progs = wavinfo wavvol wavnorm wavrev wavecho wavwide wavcat wavmix
-objs = wavinfo.o wavvol.o wavnorm.o wavrev.o wavecho.o wavwide.o wavcat.o wavmix.o
+objs = acesso.o tratamento.o wavinfo.o wavvol.o wavnorm.o wavrev.o wavecho.o wavwide.o wavcat.o wavmix.o
 
 all: $(progs)
 

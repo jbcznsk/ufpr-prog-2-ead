@@ -93,6 +93,7 @@ int main(int argc, char **argv)
 			if (!audio)
 			{
 				fprintf(stderr, "Nao foi possivel abrir o arquivo");
+				free(audio->dados);
 				free(audio);
 				free(apendice);
 				exit(1);

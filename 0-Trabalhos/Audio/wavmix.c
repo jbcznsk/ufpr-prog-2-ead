@@ -68,7 +68,7 @@ int main(int argc, char **argv)
         else
         {
             ENTRADA = fopen(argv[i], "r");
-            if (!audio)
+            if (!ENTRADA)
             {
                 fprintf(stderr, "Nao foi possivel abrir o arquivo");
                 free(audio);
@@ -92,7 +92,7 @@ int main(int argc, char **argv)
         else
         {
             ENTRADA = freopen(argv[i], "r",ENTRADA);
-            if (!audio)
+            if (!ENTRADA)
             {
                 fprintf(stderr, "Nao foi possivel abrir o arquivo");
                 free(audio);

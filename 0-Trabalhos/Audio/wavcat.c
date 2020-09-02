@@ -40,6 +40,9 @@ int main(int argc, char **argv)
 		exit(1);
 	}
 
+	/*===================================================*/
+
+	// Aloca os espaços para os audios
 	audio = malloc(sizeof(Audio_t));
 	if (!audio)
 	{
@@ -55,6 +58,8 @@ int main(int argc, char **argv)
 		exit(1);
 	}
 
+	/*===================================================*/
+
 	int i = 1;
 	// Procura o primeiro argumento que não seja -o [file]
 	while (i < argc)
@@ -66,7 +71,7 @@ int main(int argc, char **argv)
 		else
 		{
 			ENTRADA = fopen(argv[i], "r");
-			if (!audio)
+			if (!ENTRADA)
 			{
 				fprintf(stderr, "Nao foi possivel abrir o arquivo");
 				free(audio);
@@ -89,8 +94,8 @@ int main(int argc, char **argv)
 		}
 		else
 		{
-			ENTRADA = freopen(argv[i], "r",ENTRADA);
-			if (!audio)
+			ENTRADA = freopen(argv[i], "r", ENTRADA);
+			if (!ENTRADA)
 			{
 				fprintf(stderr, "Nao foi possivel abrir o arquivo");
 				free(audio->dados);

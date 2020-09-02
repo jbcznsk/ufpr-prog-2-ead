@@ -1,27 +1,27 @@
 #include "acesso.h"
 
-void ler_cabecalho_wav(FILE *ENTRADA, Audio_t *msc)
+void ler_cabecalho_wav(FILE *ENTRADA, Audio_t *audio)
 {
-    fread(&msc->cab, sizeof(Cabecalho_t), 1, ENTRADA);
+    fread(&audio->cab, sizeof(Cabecalho_t), 1, ENTRADA);
 }
 
-void ler_dados_wav(FILE *ENTRADA, Audio_t *msc)
+void ler_dados_wav(FILE *ENTRADA, Audio_t *audio)
 {
 
-    msc->dados = malloc(msc->cab.data.SubChunk2Size);
-    if (!msc->dados)
+    audio->dados = malloc(audio->cab.data.SubChunk2Size);
+    if (!audio->dados)
     {
         fprintf(stderr, "Erro ao alocar espaço para a música\n");
         exit(1);
     }
 
-    msc->tamanho = (msc->cab.data.SubChunk2Size) / (msc->cab.fmt.BitsPerSample / 8);
+    audio->tamanho = (audio->cab.data.SubChunk2Size) / (audio->cab.fmt.BitsPerSample / 8);
 
-    fread(msc->dados, sizeof(int16_t), msc->tamanho, ENTRADA);
+    fread(audio->dados, sizeof(int16_t), audio->tamanho, ENTRADA);
 }
 
-void ler_audio_wav(FILE *ENTRADA, Audio_t *msc)
+void ler_audio_wav(FILE *ENTRADA, Audio_t *audio)
 {
-    ler_cabecalho_wav(ENTRADA, msc);
-    ler_dados_wav(ENTRADA, msc);
+    ler_cabecalho_wav(ENTRADA, audio);
+    ler_dados_wav(ENTRADA, audio);
 }

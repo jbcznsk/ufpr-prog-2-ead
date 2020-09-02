@@ -11,36 +11,36 @@ int16_t mult_com_limite(int16_t a, float b, int16_t lim);
 
 // Função auxiliar para imprimir_cabecalho_wav
 void printTag(char *tagName, char *tag, int tam);
-void imprimir_cabecalho_wav(Audio_t *msc);
+void imprimir_cabecalho_wav(Audio_t *audio);
 
 // Escreve Musica na saida
-void envia_audio(FILE *SAIDA, Audio_t *msc);
+void envia_audio(FILE *SAIDA, Audio_t *audio);
 
 // Mudar Volume
-void ajustar_volume(Audio_t *msc, float level);
+void ajustar_volume(Audio_t *audio, float level);
 
 // Normalizar
-void normalizar_volume(Audio_t *msc);
+void normalizar_volume(Audio_t *audio);
 
 // Reverter
 void troca(int16_t *a, int16_t *b);
-void reverter_audio(Audio_t *msc);
+void reverter_audio(Audio_t *audio);
 
 // Eco
-void ecoar(Audio_t *msc, float level, int delay);
+void ecoar(Audio_t *audio, float level, int delay);
 
 // Estereo Ampliado
-int confere_dois_canais(Audio_t *msc);
-void estereo_amplificado(Audio_t *msc, int k);
+int confere_dois_canais(Audio_t *audio);
+void estereo_amplificado(Audio_t *audio, int k);
 
 // Função auxiliar utilizada em "concatenar" e "mixar"
-int audios_compativeis(Audio_t *mscA, Audio_t *mscB);
+int audios_compativeis(Audio_t *audioA, Audio_t *audioB);
 
 // Retorna a concatenação das duas músicas na música A
-void concatatenar_audios(Audio_t *mscA, Audio_t *mscB);
+void concatatenar_audios(Audio_t *audioA, Audio_t *audioB);
 
-// Retorna a mixagem nas duas músicas na mscA
-void mixar_audios(Audio_t *mscA, Audio_t *mscB);
+// Retorna a mixagem nas duas músicas na audioA
+void mixar_audios(Audio_t *audioA, Audio_t *audioB);
 
 // Fecha os arquivos de streams
 void fechar_streams(FILE *ENTRADA, FILE *SAIDA);

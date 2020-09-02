@@ -29,53 +29,53 @@ void printTag(char *tagName, char *tag, int tam)
 	fprintf(stdout, "\"\n");
 }
 
-void imprimir_cabecalho_wav(Audio_t *msc)
+void imprimir_cabecalho_wav(Audio_t *audio)
 {
 
-	printTag("riff tag", msc->cab.RIFF.ChunkID, 4);
-	printf("riff size      : %" PRIu32 "\n", msc->cab.RIFF.ChunkSize);
-	printTag("wave tag", msc->cab.RIFF.Format, 4);
+	printTag("riff tag", audio->cab.RIFF.ChunkID, 4);
+	printf("riff size      : %" PRIu32 "\n", audio->cab.RIFF.ChunkSize);
+	printTag("wave tag", audio->cab.RIFF.Format, 4);
 
-	printTag("form tag", msc->cab.fmt.SubChunk1ID, 4);
-	printf("fmt_size       : %" PRIu32 "\n", msc->cab.fmt.SubChunk1Size);
-	printf("audio_format   : %" PRIu16 "\n", msc->cab.fmt.AudioFormat);
-	printf("num_channels   : %" PRIu16 "\n", msc->cab.fmt.NrChannels);
-	printf("sample_rate    : %" PRIu32 "\n", msc->cab.fmt.SampleRate);
-	printf("byte_rate      : %" PRIu32 "\n", msc->cab.fmt.ByteRate);
-	printf("block_align    : %" PRIu16 "\n", msc->cab.fmt.BlockAling);
-	printf("bits_per_sample: %" PRIu16 "\n", msc->cab.fmt.BitsPerSample);
+	printTag("form tag", audio->cab.fmt.SubChunk1ID, 4);
+	printf("fmt_size       : %" PRIu32 "\n", audio->cab.fmt.SubChunk1Size);
+	printf("audio_format   : %" PRIu16 "\n", audio->cab.fmt.AudioFormat);
+	printf("num_channels   : %" PRIu16 "\n", audio->cab.fmt.NrChannels);
+	printf("sample_rate    : %" PRIu32 "\n", audio->cab.fmt.SampleRate);
+	printf("byte_rate      : %" PRIu32 "\n", audio->cab.fmt.ByteRate);
+	printf("block_align    : %" PRIu16 "\n", audio->cab.fmt.BlockAling);
+	printf("bits_per_sample: %" PRIu16 "\n", audio->cab.fmt.BitsPerSample);
 
-	printTag("data tag", msc->cab.data.SubChunk2ID, 4);
-	printf("data size      : %" PRIu32 "\n", msc->cab.data.SubChunk2Size);
+	printTag("data tag", audio->cab.data.SubChunk2ID, 4);
+	printf("data size      : %" PRIu32 "\n", audio->cab.data.SubChunk2Size);
 }
 
-void envia_audio(FILE *SAIDA, Audio_t *msc)
+void envia_audio(FILE *SAIDA, Audio_t *audio)
 {
-	fwrite(&msc->cab, sizeof(Cabecalho_t), 1, SAIDA);
-	fwrite(msc->dados, sizeof(int16_t), msc->tamanho, SAIDA);
+	fwrite(&audio->cab, sizeof(Cabecalho_t), 1, SAIDA);
+	fwrite(audio->dados, sizeof(int16_t), audio->tamanho, SAIDA);
 }
 
 // Ajuste do volume, respeitando os valores máximos
-void ajustar_volume(Audio_t *msc, float level)
+void ajustar_volume(Audio_t *audio, float level)
 {
-	for (int i = 0; i < msc->tamanho; i++)
-		msc->dados[i] = mult_com_limite(msc->dados[i], level, VOLMAX);
+	for (int i = 0; i < audio->tamanho; i++)
+		audio->dados[i] = mult_com_limite(audio->dados[i], level, VOLMAX);
 }
 
-void normalizar_volume(Audio_t *msc)
+void normalizar_volume(Audio_t *audio)
 {
 	int16_t valorAtual, maiorValor = 0;
 
 	// Acha o maior valor absoluto
-	for (int i = 0; i < msc->tamanho; i++)
+	for (int i = 0; i < audio->tamanho; i++)
 	{
-		valorAtual = abs(msc->dados[i]);
+		valorAtual = abs(audio->dados[i]);
 		if (valorAtual > maiorValor)
 			maiorValor = valorAtual;
 	}
 
 	float level = (float)VOLMAX / (float)maiorValor;
-	ajustar_volume(msc, level);
+	ajustar_volume(audio, level);
 }
 
 void troca(int16_t *a, int16_t *b)
@@ -85,69 +85,69 @@ void troca(int16_t *a, int16_t *b)
 	*b = aux;
 }
 
-void reverter_audio(Audio_t *msc)
+void reverter_audio(Audio_t *audio)
 {
-	for (int i = 0; i < msc->tamanho / 2; i++)
-		troca(&msc->dados[i], &msc->dados[msc->tamanho - 1 - i]);
+	for (int i = 0; i < audio->tamanho / 2; i++)
+		troca(&audio->dados[i], &audio->dados[audio->tamanho - 1 - i]);
 }
 
-void ecoar(Audio_t *msc, float level, int delay)
+void ecoar(Audio_t *audio, float level, int delay)
 {
 	int pontoInicial;
 	uint32_t amostragem;
 
-	amostragem = msc->cab.fmt.SampleRate;
+	amostragem = audio->cab.fmt.SampleRate;
 	pontoInicial = amostragem * delay / 1000;
 
-	for (int i = pontoInicial; i < msc->tamanho; i++)
-		msc->dados[i] = soma_com_limite(msc->dados[i], level * msc->dados[i - pontoInicial], VOLMAX);
+	for (int i = pontoInicial; i < audio->tamanho; i++)
+		audio->dados[i] = soma_com_limite(audio->dados[i], level * audio->dados[i - pontoInicial], VOLMAX);
 }
 
-int confere_dois_canais(Audio_t *msc)
+int confere_dois_canais(Audio_t *audio)
 {
-	if (msc->cab.fmt.NrChannels != 2)
+	if (audio->cab.fmt.NrChannels != 2)
 		return 0;
 	return 1;
 }
-void estereo_amplificado(Audio_t *msc, int k)
+void estereo_amplificado(Audio_t *audio, int k)
 {
 	int16_t diff;
 
-	for (int i = 0; i < msc->tamanho; i += 2)
+	for (int i = 0; i < audio->tamanho; i += 2)
 	{
-		diff = msc->dados[i + 1] - msc->dados[i];
-		msc->dados[i + 1] = soma_com_limite(msc->dados[i + 1], k * diff, VOLMAX); // Canal direito
-		msc->dados[i] = soma_com_limite(msc->dados[i + 1], -(k * diff), VOLMAX);  // Canal esquerdo
+		diff = audio->dados[i + 1] - audio->dados[i];
+		audio->dados[i + 1] = soma_com_limite(audio->dados[i + 1], k * diff, VOLMAX); // Canal direito
+		audio->dados[i] = soma_com_limite(audio->dados[i + 1], -(k * diff), VOLMAX);  // Canal esquerdo
 	}
 }
 
-int audios_compativeis(Audio_t *mscA, Audio_t *mscB)
+int audios_compativeis(Audio_t *audioA, Audio_t *audioB)
 {
 	// Nr de canais
-	if (mscA->cab.fmt.NrChannels != mscB->cab.fmt.NrChannels)
+	if (audioA->cab.fmt.NrChannels != audioB->cab.fmt.NrChannels)
 		return 0;
 
 	// Taxa de amostragem
-	if (mscA->cab.fmt.SampleRate != mscB->cab.fmt.SampleRate)
+	if (audioA->cab.fmt.SampleRate != audioB->cab.fmt.SampleRate)
 		return 0;
 
 	// Codificação utilizada
-	if (mscA->cab.fmt.AudioFormat != mscB->cab.fmt.AudioFormat)
+	if (audioA->cab.fmt.AudioFormat != audioB->cab.fmt.AudioFormat)
 		return 0;
 
 	// Bits por sample
-	if (mscA->cab.fmt.BitsPerSample != mscB->cab.fmt.BitsPerSample)
+	if (audioA->cab.fmt.BitsPerSample != audioB->cab.fmt.BitsPerSample)
 		return 0;
 
 	return 1;
 }
 
 // Retorna a concatenação das duas músicas na música A
-void concatatenar_audios(Audio_t *mscA, Audio_t *mscB)
+void concatatenar_audios(Audio_t *audioA, Audio_t *audioB)
 {
 
 	// Conferir compatibilidade
-	if (!audios_compativeis(mscA, mscB))
+	if (!audios_compativeis(audioA, audioB))
 	{
 		// Desaloca tudo
 
@@ -160,28 +160,28 @@ void concatatenar_audios(Audio_t *mscA, Audio_t *mscB)
 
 	// Modificar o cabeçalho da audio destino
 	//// RIFF ChunkSize
-	mscA->cab.RIFF.ChunkSize += mscB->cab.data.SubChunk2Size;
+	audioA->cab.RIFF.ChunkSize += audioB->cab.data.SubChunk2Size;
 
 	//// Data SubChunk2Size
-	mscA->cab.data.SubChunk2Size += mscB->cab.data.SubChunk2Size;
+	audioA->cab.data.SubChunk2Size += audioB->cab.data.SubChunk2Size;
 
 	// Realocar audio->dados da audio destino
-	mscA->dados = realloc(mscA->dados, mscA->cab.data.SubChunk2Size);
+	audioA->dados = realloc(audioA->dados, audioA->cab.data.SubChunk2Size);
 
 	// Concatenar os audio->dados
-	for (int i = 0; i < mscB->tamanho; i++)
+	for (int i = 0; i < audioB->tamanho; i++)
 	{
-		mscA->dados[i + mscA->tamanho - 1] = mscB->dados[i];
+		audioA->dados[i + audioA->tamanho - 1] = audioB->dados[i];
 	}
 
-	mscA->tamanho += mscB->tamanho;
+	audioA->tamanho += audioB->tamanho;
 }
 
-// Retorna a mixagem nas duas músicas na mscA
-void mixar_audios(Audio_t *mscA, Audio_t *mscB)
+// Retorna a mixagem nas duas músicas na audioA
+void mixar_audios(Audio_t *audioA, Audio_t *audioB)
 {
 	// Conferir compatibilidade
-	if (!audios_compativeis(mscA, mscB))
+	if (!audios_compativeis(audioA, audioB))
 	{
 		// Desaloca tudo
 
@@ -193,22 +193,22 @@ void mixar_audios(Audio_t *mscA, Audio_t *mscB)
 	}
 
 	// Começa assumindo que o audio B é menor
-	int menor = mscB->tamanho;
+	int menor = audioB->tamanho;
 
 	// Caso não seja, arruma o audio A para que ele comporte o tamanho de B
-	if (mscA->tamanho < mscB->tamanho)
+	if (audioA->tamanho < audioB->tamanho)
 	{
-		menor = mscA->tamanho;
-		mscA->tamanho = mscB->tamanho;
-		mscA->cab = mscB->cab;
-		mscA->dados = realloc(mscA->dados, mscB->cab.data.SubChunk2Size);
+		menor = audioA->tamanho;
+		audioA->tamanho = audioB->tamanho;
+		audioA->cab = audioB->cab;
+		audioA->dados = realloc(audioA->dados, audioB->cab.data.SubChunk2Size);
 
-		for (int i = menor; i < mscB->tamanho; i++)
-			mscA->dados[i] = mscB->dados[i];
+		for (int i = menor; i < audioB->tamanho; i++)
+			audioA->dados[i] = audioB->dados[i];
 	}
 
 	for (int i = 0; i < menor; i++)
-		mscA->dados[i] = soma_com_limite(mscA->dados[i], mscB->dados[i], VOLMAX);
+		audioA->dados[i] = soma_com_limite(audioA->dados[i], audioB->dados[i], VOLMAX);
 }
 
 

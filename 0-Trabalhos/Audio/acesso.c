@@ -25,3 +25,9 @@ void ler_audio_wav(FILE *ENTRADA, Audio_t *audio)
     ler_cabecalho_wav(ENTRADA, audio);
     ler_dados_wav(ENTRADA, audio);
 }
+
+void envia_audio(FILE *SAIDA, Audio_t *audio)
+{
+	fwrite(&audio->cab, sizeof(Cabecalho_t), 1, SAIDA);
+	fwrite(audio->dados, sizeof(int16_t), audio->tamanho, SAIDA);
+}

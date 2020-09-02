@@ -1,15 +1,9 @@
 #include "acesso.h"
 #include "tratamento.h"
 
-int main(int argc, char **argv)
+void tratar_argumentos(int argc, char **argv, FILE *ENTRADA, FILE *SAIDA, float *level)
 {
-
-	FILE *ENTRADA = stdin, *SAIDA = stdout;
 	int opt;
-	Audio_t *audio;
-	float level = 1.0;
-
-	/*===================================================*/
 
 	while ((opt = getopt(argc, argv, "i:o:l:")) != -1)
 	{
@@ -17,7 +11,7 @@ int main(int argc, char **argv)
 		{
 		// Entrada
 		case 'i':
-			ENTRADA = fopen(optarg, "r");
+			ENTRADA = freopen(optarg, "r", ENTRADA);
 			if (!ENTRADA)
 			{
 				fprintf(stderr, "Não foi possível encontrar o arquivo\n");
@@ -27,7 +21,7 @@ int main(int argc, char **argv)
 
 		// Saída
 		case 'o':
-			SAIDA = fopen(optarg, "w+");
+			SAIDA = freopen(optarg, "w", SAIDA);
 			if (!SAIDA)
 			{
 				fprintf(stderr, "Erro ao criar saída de dados\n");
@@ -37,8 +31,8 @@ int main(int argc, char **argv)
 
 		// Volume
 		case 'l':
-			level = atof(optarg);
-			if (level < 0.0 || level > 10.0)
+			*level = atof(optarg);
+			if (*level < 0.0 || *level > 10.0)
 			{
 				fprintf(stderr, "Level deve ser um valor entre 0.0 e 10.0\n");
 				exit(1);
@@ -50,8 +44,16 @@ int main(int argc, char **argv)
 			exit(1);
 		}
 	}
+}
 
-	/*===================================================*/
+int main(int argc, char **argv)
+{
+
+	FILE *ENTRADA = stdin, *SAIDA = stdout;
+	Audio_t *audio;
+	float level = 1.0; // Valor Padrão
+
+	tratar_argumentos(argc, argv, ENTRADA, SAIDA, &level);
 
 	audio = malloc(sizeof(Audio_t));
 	if (!audio)
@@ -63,13 +65,12 @@ int main(int argc, char **argv)
 	ler_audio_wav(ENTRADA, audio);
 
 	// Ajuste do volume, respeitando os valores máximos
-	if (level != 1)
-		ajustar_volume(audio, level);
+	ajustar_volume(audio, level);
 
 	envia_audio(SAIDA, audio);
 
 	fechar_streams(ENTRADA, SAIDA);
-	
+
 	free(audio->dados);
 	free(audio);
 

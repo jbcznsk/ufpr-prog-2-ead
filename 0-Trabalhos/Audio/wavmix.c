@@ -40,6 +40,9 @@ int main(int argc, char **argv)
         exit(1);
     }
 
+
+    /*===================================================*/
+
     audio = malloc(sizeof(Audio_t));
     if (!audio)
     {

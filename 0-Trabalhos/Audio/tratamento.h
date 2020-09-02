@@ -13,8 +13,6 @@ int16_t mult_com_limite(int16_t a, float b, int16_t lim);
 void printTag(char *tagName, char *tag, int tam);
 void imprimir_cabecalho_wav(Audio_t *audio);
 
-// Escreve Musica na saida
-void envia_audio(FILE *SAIDA, Audio_t *audio);
 
 // Mudar Volume
 void ajustar_volume(Audio_t *audio, float level);

@@ -41,7 +41,7 @@ int main(int argc, char **argv)
 			level = atof(optarg);
 			if (level < 0.0 || level > 1.0)
 			{
-				fprintf(stderr, "Level deve ser um valor entre 0.0 e 1\n");
+				fprintf(stderr, "Level deve ser um valor entre 0.0 e 1.0\n");
 				exit(1);
 			}
 			break;

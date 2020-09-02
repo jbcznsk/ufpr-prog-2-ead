@@ -49,17 +49,13 @@ void imprimir_cabecalho_wav(Audio_t *audio)
 	printf("data size      : %" PRIu32 "\n", audio->cab.data.SubChunk2Size);
 }
 
-void envia_audio(FILE *SAIDA, Audio_t *audio)
-{
-	fwrite(&audio->cab, sizeof(Cabecalho_t), 1, SAIDA);
-	fwrite(audio->dados, sizeof(int16_t), audio->tamanho, SAIDA);
-}
+
 
 // Ajuste do volume, respeitando os valores máximos
 void ajustar_volume(Audio_t *audio, float level)
-{
-	for (int i = 0; i < audio->tamanho; i++)
-		audio->dados[i] = mult_com_limite(audio->dados[i], level, VOLMAX);
+{	if (level != 1.0)
+		for (int i = 0; i < audio->tamanho; i++)
+			audio->dados[i] = mult_com_limite(audio->dados[i], level, VOLMAX);
 }
 
 void normalizar_volume(Audio_t *audio)

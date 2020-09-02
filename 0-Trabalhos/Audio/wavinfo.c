@@ -1,34 +1,36 @@
 #include "acesso.h"
 #include "tratamento.h"
 
-
-int main(int argc, char **argv){
-
-	FILE *ENTRADA = stdin, *SAIDA = stdout;
+void tratar_argumentos(int argc, char **argv, FILE *ENTRADA)
+{
 	int opt;
-	Audio_t audio;
-
-/*===================================================*/
-
-	while((opt = getopt(argc, argv, "i:"))!= -1 )
+	while ((opt = getopt(argc, argv, "i:")) != -1)
 	{
-		switch (opt) {
-			case 'i':
-			ENTRADA = fopen(optarg, "r");
-			if(!ENTRADA)
+		switch (opt)
+		{
+		case 'i':
+			ENTRADA = freopen(optarg, "r", ENTRADA);
+			if (!ENTRADA)
 			{
 				fprintf(stderr, "Não foi possível encontrar o arquivo\n");
 				exit(1);
 			}
 			break;
-			
-			default:
-				fprintf(stderr, "Usage: ./wavinfo -i [FILE]\n");
-				exit(1);
+
+		default:
+			fprintf(stderr, "Usage: ./wavinfo -i [FILE]\n");
+			exit(1);
 		}
 	}
+}
 
-/*===================================================*/
+int main(int argc, char **argv)
+{
+
+	FILE *ENTRADA = stdin, *SAIDA = stdout;
+	Audio_t audio;
+
+	tratar_argumentos(argc, argv, ENTRADA);
 
 	ler_cabecalho_wav(ENTRADA, &audio);
 

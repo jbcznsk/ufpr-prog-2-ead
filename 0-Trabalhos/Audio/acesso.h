@@ -10,4 +10,7 @@ void ler_dados_wav(FILE *ENTRADA, Audio_t *audio);
 
 void ler_audio_wav(FILE *ENTRADA, Audio_t *audio);
 
+// Escreve Musica na saida
+void envia_audio(FILE *SAIDA, Audio_t *audio);
+
 #endif

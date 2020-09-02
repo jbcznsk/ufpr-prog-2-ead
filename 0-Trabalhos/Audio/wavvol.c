@@ -6,7 +6,7 @@ int main(int argc, char **argv)
 
 	FILE *ENTRADA = stdin, *SAIDA = stdout;
 	int opt;
-	Musica_t *musica;
+	Audio_t *audio;
 	float level = 1.0;
 
 	/*===================================================*/
@@ -53,23 +53,25 @@ int main(int argc, char **argv)
 
 	/*===================================================*/
 
-	musica = malloc(sizeof(Musica_t));
-	if (!musica)
+	audio = malloc(sizeof(Audio_t));
+	if (!audio)
 	{
-		fprintf(stderr, "Erro ao alocar espaço para a musica\n");
+		fprintf(stderr, "Erro ao alocar espaço para a audio\n");
 		exit(1);
 	}
 
-	ler_musica_wav(ENTRADA, musica);
+	ler_audio_wav(ENTRADA, audio);
 
 	// Ajuste do volume, respeitando os valores máximos
-	ajustar_volume(musica, level);
+	if (level != 1)
+		ajustar_volume(audio, level);
 
-	envia_musica(SAIDA, musica);
+	envia_audio(SAIDA, audio);
 
-	fclose(ENTRADA);
-	fclose(SAIDA);
-	free(musica);
+	fechar_streams(ENTRADA, SAIDA);
+	
+	free(audio->dados);
+	free(audio);
 
 	return 0;
 }

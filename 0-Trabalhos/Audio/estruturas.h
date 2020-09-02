@@ -9,11 +9,6 @@
 // Valor divertido :)
 #define VOLMAX 32323
 
-// Operaçoes
-#define SOMA 1
-#define SUBT 2
-#define MULT 3
-
 struct Cabecalho_s
 {
 	struct RIFF_s
@@ -43,12 +38,12 @@ struct Cabecalho_s
 };
 typedef struct Cabecalho_s Cabecalho_t;
 
-struct Musica_s
+struct Audio_s
 {
 	Cabecalho_t cab;
 	int tamanho;
 	int16_t *dados;
 };
-typedef struct Musica_s Musica_t;
+typedef struct Audio_s Audio_t;
 
 #endif

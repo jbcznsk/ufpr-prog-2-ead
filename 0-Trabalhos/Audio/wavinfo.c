@@ -6,7 +6,7 @@ int main(int argc, char **argv){
 
 	FILE *ENTRADA = stdin, *SAIDA = stdout;
 	int opt;
-	Musica_t musica;
+	Audio_t audio;
 
 /*===================================================*/
 
@@ -30,12 +30,11 @@ int main(int argc, char **argv){
 
 /*===================================================*/
 
-	ler_cabecalho_wav(ENTRADA, &musica);
+	ler_cabecalho_wav(ENTRADA, &audio);
 
-	imprimir_cabecalho_wav(&musica);
+	imprimir_cabecalho_wav(&audio);
 
-	fclose(ENTRADA);
-	fclose(SAIDA);
+	fechar_streams(ENTRADA, SAIDA);
 
 	return 0;
 }

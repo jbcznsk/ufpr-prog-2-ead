@@ -29,7 +29,7 @@ void printTag(char *tagName, char *tag, int tam)
 	fprintf(stdout, "\"\n");
 }
 
-void imprimir_cabecalho_wav(Musica_t *msc)
+void imprimir_cabecalho_wav(Audio_t *msc)
 {
 
 	printTag("riff tag", msc->cab.RIFF.ChunkID, 4);
@@ -49,20 +49,20 @@ void imprimir_cabecalho_wav(Musica_t *msc)
 	printf("data size      : %" PRIu32 "\n", msc->cab.data.SubChunk2Size);
 }
 
-void envia_musica(FILE *SAIDA, Musica_t *msc)
+void envia_audio(FILE *SAIDA, Audio_t *msc)
 {
 	fwrite(&msc->cab, sizeof(Cabecalho_t), 1, SAIDA);
 	fwrite(msc->dados, sizeof(int16_t), msc->tamanho, SAIDA);
 }
 
 // Ajuste do volume, respeitando os valores máximos
-void ajustar_volume(Musica_t *msc, float level)
+void ajustar_volume(Audio_t *msc, float level)
 {
 	for (int i = 0; i < msc->tamanho; i++)
 		msc->dados[i] = mult_com_limite(msc->dados[i], level, VOLMAX);
 }
 
-void normalizar_volume(Musica_t *msc)
+void normalizar_volume(Audio_t *msc)
 {
 	int16_t valorAtual, maiorValor = 0;
 
@@ -85,13 +85,13 @@ void troca(int16_t *a, int16_t *b)
 	*b = aux;
 }
 
-void reverter_musica(Musica_t *msc)
+void reverter_audio(Audio_t *msc)
 {
 	for (int i = 0; i < msc->tamanho / 2; i++)
 		troca(&msc->dados[i], &msc->dados[msc->tamanho - 1 - i]);
 }
 
-void ecoar(Musica_t *msc, float level, int delay)
+void ecoar(Audio_t *msc, float level, int delay)
 {
 	int pontoInicial;
 	uint32_t amostragem;
@@ -103,13 +103,13 @@ void ecoar(Musica_t *msc, float level, int delay)
 		msc->dados[i] = soma_com_limite(msc->dados[i], level * msc->dados[i - pontoInicial], VOLMAX);
 }
 
-int confere_dois_canais(Musica_t *msc)
+int confere_dois_canais(Audio_t *msc)
 {
 	if (msc->cab.fmt.NrChannels != 2)
 		return 0;
 	return 1;
 }
-void estereo_amplificado(Musica_t *msc, int k)
+void estereo_amplificado(Audio_t *msc, int k)
 {
 	int16_t diff;
 
@@ -121,7 +121,7 @@ void estereo_amplificado(Musica_t *msc, int k)
 	}
 }
 
-int musicas_compativeis(Musica_t *mscA, Musica_t *mscB)
+int audios_compativeis(Audio_t *mscA, Audio_t *mscB)
 {
 	// Nr de canais
 	if (mscA->cab.fmt.NrChannels != mscB->cab.fmt.NrChannels)
@@ -143,11 +143,11 @@ int musicas_compativeis(Musica_t *mscA, Musica_t *mscB)
 }
 
 // Retorna a concatenação das duas músicas na música A
-void concatatenar_musicas(Musica_t *mscA, Musica_t *mscB)
+void concatatenar_audios(Audio_t *mscA, Audio_t *mscB)
 {
 
 	// Conferir compatibilidade
-	if (!musicas_compativeis(mscA, mscB))
+	if (!audios_compativeis(mscA, mscB))
 	{
 		// Desaloca tudo
 
@@ -158,17 +158,17 @@ void concatatenar_musicas(Musica_t *mscA, Musica_t *mscB)
 		exit(1);
 	}
 
-	// Modificar o cabeçalho da musica destino
+	// Modificar o cabeçalho da audio destino
 	//// RIFF ChunkSize
 	mscA->cab.RIFF.ChunkSize += mscB->cab.data.SubChunk2Size;
 
 	//// Data SubChunk2Size
 	mscA->cab.data.SubChunk2Size += mscB->cab.data.SubChunk2Size;
 
-	// Realocar musica->dados da musica destino
+	// Realocar audio->dados da audio destino
 	mscA->dados = realloc(mscA->dados, mscA->cab.data.SubChunk2Size);
 
-	// Concatenar os musica->dados
+	// Concatenar os audio->dados
 	for (int i = 0; i < mscB->tamanho; i++)
 	{
 		mscA->dados[i + mscA->tamanho - 1] = mscB->dados[i];
@@ -178,10 +178,10 @@ void concatatenar_musicas(Musica_t *mscA, Musica_t *mscB)
 }
 
 // Retorna a mixagem nas duas músicas na mscA
-void mixar_musicas(Musica_t *mscA, Musica_t *mscB)
+void mixar_audios(Audio_t *mscA, Audio_t *mscB)
 {
 	// Conferir compatibilidade
-	if (!musicas_compativeis(mscA, mscB))
+	if (!audios_compativeis(mscA, mscB))
 	{
 		// Desaloca tudo
 
@@ -209,4 +209,13 @@ void mixar_musicas(Musica_t *mscA, Musica_t *mscB)
 
 	for (int i = 0; i < menor; i++)
 		mscA->dados[i] = soma_com_limite(mscA->dados[i], mscB->dados[i], VOLMAX);
+}
+
+
+void fechar_streams(FILE *ENTRADA, FILE *SAIDA)
+{
+	if (ENTRADA != stdin)
+		fclose(ENTRADA);
+	if (SAIDA != stdout)
+		fclose(SAIDA);
 }

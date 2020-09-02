@@ -6,7 +6,7 @@ int main(int argc, char **argv)
 
     FILE *ENTRADA = stdin, *SAIDA = stdout;
     int opt;
-    Musica_t *musica, *apendice;
+    Audio_t *audio, *apendice;
     int saida_selecionada = 0;
 
     /*===================================================*/
@@ -40,18 +40,18 @@ int main(int argc, char **argv)
         exit(1);
     }
 
-    musica = malloc(sizeof(Musica_t));
-    if (!musica)
+    audio = malloc(sizeof(Audio_t));
+    if (!audio)
     {
-        fprintf(stderr, "Erro ao alocar espaço para a musica\n");
+        fprintf(stderr, "Erro ao alocar espaço para a audio\n");
         exit(1);
     }
 
-    apendice = malloc(sizeof(Musica_t));
+    apendice = malloc(sizeof(Audio_t));
     if (!apendice)
     {
-        free(musica);
-        fprintf(stderr, "Erro ao alocar espaço para a musica\n");
+        free(audio);
+        fprintf(stderr, "Erro ao alocar espaço para a audio\n");
         exit(1);
     }
 
@@ -68,10 +68,10 @@ int main(int argc, char **argv)
         else
         {
             ENTRADA = fopen(argv[i], "r");
-            if (!musica)
+            if (!audio)
             {
                 fprintf(stderr, "Nao foi possivel abrir o arquivo");
-                free(musica);
+                free(audio);
                 free(apendice);
                 exit(1);
             }
@@ -80,7 +80,7 @@ int main(int argc, char **argv)
         i++;
     }
 
-    ler_musica_wav(ENTRADA, musica);
+    ler_audio_wav(ENTRADA, audio);
 
     i++;
     while (i < argc)
@@ -91,28 +91,31 @@ int main(int argc, char **argv)
         }
         else
         {
-            ENTRADA = fopen(argv[i], "r");
-            if (!musica)
+            ENTRADA = freopen(argv[i], "r",ENTRADA);
+            if (!audio)
             {
                 fprintf(stderr, "Nao foi possivel abrir o arquivo");
-                free(musica);
+                free(audio);
                 free(apendice);
                 exit(1);
             }
 
-            ler_musica_wav(ENTRADA, apendice);
-            mixar_musicas(musica, apendice);
+            ler_audio_wav(ENTRADA, apendice);
+            mixar_audios(audio, apendice);
+            free(apendice->dados);
         }
 
         i++;
     }
 
-    envia_musica(SAIDA, musica);
+    envia_audio(SAIDA, audio);
 
-    fclose(ENTRADA);
-    fclose(SAIDA);
-    free(musica->dados);
-    free(musica);
+	fechar_streams(ENTRADA, SAIDA);
+	
+	free(audio->dados);
+	free(audio);
+	free(apendice);
+
 
     return 0;
 }

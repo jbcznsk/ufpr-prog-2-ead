@@ -6,7 +6,7 @@ int main(int argc, char **argv)
 
 	FILE *ENTRADA = stdin, *SAIDA = stdout;
 	int opt;
-	Musica_t *musica;
+	Audio_t *audio;
 	float k = 1.0;
 
 	/*===================================================*/
@@ -53,33 +53,33 @@ int main(int argc, char **argv)
 
 	/*===================================================*/
 
-	musica = malloc(sizeof(Musica_t));
-	if (!musica)
+	audio = malloc(sizeof(Audio_t));
+	if (!audio)
 	{
-		fprintf(stderr, "Erro ao alocar espaço para a musica\n");
+		fprintf(stderr, "Erro ao alocar espaço para a audio\n");
 		exit(1);
 	}
 
-	ler_musica_wav(ENTRADA, musica);
+	ler_audio_wav(ENTRADA, audio);
 
     // Confere se o efeito é aplicavel
-    if(!confere_dois_canais(musica))
+    if(!confere_dois_canais(audio))
     {
         fclose(ENTRADA);
         fclose(SAIDA);
-        free(musica->dados);
-        free(musica);
+        free(audio->dados);
+        free(audio);
     }
 
 	// Aplica o eco
-	estereo_amplificado(musica, k);
+	estereo_amplificado(audio, k);
 
-	envia_musica(SAIDA, musica);
+	envia_audio(SAIDA, audio);
 
-	fclose(ENTRADA);
-	fclose(SAIDA);
-    free(musica->dados);
-	free(musica);
+	fechar_streams(ENTRADA, SAIDA);
+
+	free(audio->dados);
+	free(audio);
 
 	return 0;
 }

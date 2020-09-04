@@ -1,6 +1,38 @@
 #include "acesso.h"
 #include "tratamento.h"
 
+void tratar_argumentos(int argc, char **argv, FILE *ENTRADA, FILE *SAIDA, float *level);
+
+int main(int argc, char **argv)
+{
+	FILE *ENTRADA = stdin, *SAIDA = stdout;
+	Audio_t *audio;
+	float level = 1.0; // Valor Padrão
+
+	tratar_argumentos(argc, argv, ENTRADA, SAIDA, &level);
+
+	audio = malloc(sizeof(Audio_t));
+	if (!audio)
+	{
+		fprintf(stderr, "Erro ao alocar espaço para a audio\n");
+		exit(1);
+	}
+
+	ler_audio_wav(ENTRADA, audio);
+
+	// Ajuste do volume, respeitando os valores máximos
+	ajustar_volume(audio, level);
+
+	envia_audio(SAIDA, audio);
+
+	fechar_streams(ENTRADA, SAIDA);
+
+	free(audio->dados);
+	free(audio);
+
+	return 0;
+}
+
 void tratar_argumentos(int argc, char **argv, FILE *ENTRADA, FILE *SAIDA, float *level)
 {
 	int opt;
@@ -44,35 +76,4 @@ void tratar_argumentos(int argc, char **argv, FILE *ENTRADA, FILE *SAIDA, float 
 			exit(1);
 		}
 	}
-}
-
-int main(int argc, char **argv)
-{
-
-	FILE *ENTRADA = stdin, *SAIDA = stdout;
-	Audio_t *audio;
-	float level = 1.0; // Valor Padrão
-
-	tratar_argumentos(argc, argv, ENTRADA, SAIDA, &level);
-
-	audio = malloc(sizeof(Audio_t));
-	if (!audio)
-	{
-		fprintf(stderr, "Erro ao alocar espaço para a audio\n");
-		exit(1);
-	}
-
-	ler_audio_wav(ENTRADA, audio);
-
-	// Ajuste do volume, respeitando os valores máximos
-	ajustar_volume(audio, level);
-
-	envia_audio(SAIDA, audio);
-
-	fechar_streams(ENTRADA, SAIDA);
-
-	free(audio->dados);
-	free(audio);
-
-	return 0;
 }

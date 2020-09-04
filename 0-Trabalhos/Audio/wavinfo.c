@@ -1,6 +1,24 @@
 #include "acesso.h"
 #include "tratamento.h"
 
+void tratar_argumentos(int argc, char **argv, FILE *ENTRADA);
+
+int main(int argc, char **argv)
+{
+	FILE *ENTRADA = stdin, *SAIDA = stdout;
+	Audio_t audio;
+
+	tratar_argumentos(argc, argv, ENTRADA);
+
+	ler_cabecalho_wav(ENTRADA, &audio);
+
+	imprimir_cabecalho_wav(&audio);
+
+	fechar_streams(ENTRADA, SAIDA);
+
+	return 0;
+}
+
 void tratar_argumentos(int argc, char **argv, FILE *ENTRADA)
 {
 	int opt;
@@ -22,21 +40,4 @@ void tratar_argumentos(int argc, char **argv, FILE *ENTRADA)
 			exit(1);
 		}
 	}
-}
-
-int main(int argc, char **argv)
-{
-
-	FILE *ENTRADA = stdin, *SAIDA = stdout;
-	Audio_t audio;
-
-	tratar_argumentos(argc, argv, ENTRADA);
-
-	ler_cabecalho_wav(ENTRADA, &audio);
-
-	imprimir_cabecalho_wav(&audio);
-
-	fechar_streams(ENTRADA, SAIDA);
-
-	return 0;
 }

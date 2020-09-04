@@ -1,40 +1,18 @@
 #include "acesso.h"
 #include "tratamento.h"
 
+void tratar_argumentos(int argc, char **argv, FILE *ENTRADA, FILE *SAIDA);
+
 int main(int argc, char **argv)
 {
 
 	FILE *ENTRADA = stdin, *SAIDA = stdout;
-	int opt;
 	Audio_t *audio, *apendice;
-	int saida_selecionada = 0;
 
-	/*===================================================*/
-
-	while ((opt = getopt(argc, argv, "o:")) != -1)
-	{
-		switch (opt)
-		{
-		case 'o':
-			saida_selecionada = 1;
-			SAIDA = fopen(optarg, "w+");
-			if (!SAIDA)
-			{
-				fprintf(stderr, "Erro ao criar saída de dados\n");
-				exit(1);
-			}
-			break;
-
-		default:
-			fprintf(stderr, "Usage: ./wavcat file1 file2 ... filen -o [FILE] \n");
-			exit(1);
-		}
-	}
-
-	/*===================================================*/
+	tratar_argumentos(argc, argv, ENTRADA, SAIDA);
 
 	// Checa o numero de argumentos
-	if ((saida_selecionada && (argc < 5)) || (!saida_selecionada && (argc < 2)))
+	if (((SAIDA != stdout) && (argc < 5)) || ((SAIDA == stdout) && (argc < 2)))
 	{
 		fprintf(stderr, "Faltam argumentos\n");
 		exit(1);
@@ -120,4 +98,39 @@ int main(int argc, char **argv)
 	free(audio);
 	free(apendice);
 	return 0;
+}
+
+void tratar_argumentos(int argc, char **argv, FILE *ENTRADA, FILE *SAIDA)
+{
+	int opt;
+	while ((opt = getopt(argc, argv, "i:o:")) != -1)
+	{
+		switch (opt)
+		{
+
+		// Entrada
+		case 'i':
+			ENTRADA = freopen(optarg, "r", ENTRADA);
+			if (!ENTRADA)
+			{
+				fprintf(stderr, "Não foi possível encontrar o arquivo\n");
+				exit(1);
+			}
+			break;
+
+		// Saída
+		case 'o':
+			SAIDA = freopen(optarg, "w+", SAIDA);
+			if (!SAIDA)
+			{
+				fprintf(stderr, "Erro ao criar saída de dados\n");
+				exit(1);
+			}
+			break;
+
+		default:
+			fprintf(stderr, "Usage: ./wavcat file1 file2 ... fileN -o [FILE] \n");
+			exit(1);
+		}
+	}
 }

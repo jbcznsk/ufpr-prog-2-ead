@@ -23,7 +23,7 @@ int16_t mult_com_limite(int16_t a, float b, int16_t lim)
 
 void printTag(char *tagName, char *tag, int tam)
 {
-	printf("%s       : \"", tagName);
+	printf("%s       (4 bytes): \"", tagName);
 	for (int i = 0; i < tam; i++)
 		putc(tag[i], stdout);
 	fprintf(stdout, "\"\n");
@@ -33,20 +33,23 @@ void imprimir_cabecalho_wav(Audio_t *audio)
 {
 
 	printTag("riff tag", audio->cab.RIFF.ChunkID, 4);
-	printf("riff size      : %" PRIu32 "\n", audio->cab.RIFF.ChunkSize);
+	printf("riff size      (4 bytes): %" PRIu32 "\n", audio->cab.RIFF.ChunkSize);
 	printTag("wave tag", audio->cab.RIFF.Format, 4);
 
 	printTag("form tag", audio->cab.fmt.SubChunk1ID, 4);
-	printf("fmt_size       : %" PRIu32 "\n", audio->cab.fmt.SubChunk1Size);
-	printf("audio_format   : %" PRIu16 "\n", audio->cab.fmt.AudioFormat);
-	printf("num_channels   : %" PRIu16 "\n", audio->cab.fmt.NrChannels);
-	printf("sample_rate    : %" PRIu32 "\n", audio->cab.fmt.SampleRate);
-	printf("byte_rate      : %" PRIu32 "\n", audio->cab.fmt.ByteRate);
-	printf("block_align    : %" PRIu16 "\n", audio->cab.fmt.BlockAling);
-	printf("bits_per_sample: %" PRIu16 "\n", audio->cab.fmt.BitsPerSample);
+	printf("fmt_size       (4 bytes): %" PRIu32 "\n", audio->cab.fmt.SubChunk1Size);
+	printf("audio_format   (2 bytes): %" PRIu16 "\n", audio->cab.fmt.AudioFormat);
+	printf("num_channels   (2 bytes): %" PRIu16 "\n", audio->cab.fmt.NrChannels);
+	printf("sample_rate    (4 bytes): %" PRIu32 "\n", audio->cab.fmt.SampleRate);
+	printf("byte_rate      (4 bytes): %" PRIu32 "\n", audio->cab.fmt.ByteRate);
+	printf("block_align    (2 bytes): %" PRIu16 "\n", audio->cab.fmt.BlockAling);
+	printf("bits_per_sample(2 bytes): %" PRIu16 "\n", audio->cab.fmt.BitsPerSample);
 
 	printTag("data tag", audio->cab.data.SubChunk2ID, 4);
-	printf("data size      : %" PRIu32 "\n", audio->cab.data.SubChunk2Size);
+	printf("data size      (4 bytes): %" PRIu32 "\n", audio->cab.data.SubChunk2Size);
+
+	printf("bytes per sample        : %" PRIu32 "\n", audio->cab.fmt.BitsPerSample/8);
+	printf("samples per channel     : %" PRIu32 "\n", (audio->cab.data.SubChunk2Size/audio->cab.fmt.NrChannels)/(audio->cab.fmt.BitsPerSample/8));
 }
 
 

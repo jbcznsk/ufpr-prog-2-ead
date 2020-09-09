@@ -1,8 +1,8 @@
 CC = gcc
 CFLAGS = -Wall -g -pedantic
 
-progs = wavinfo wavvol wavnorm wavrev wavecho wavwide wavcat wavmix
-objs = acesso.o tratamento.o wavinfo.o wavvol.o wavnorm.o wavrev.o wavecho.o wavwide.o wavcat.o wavmix.o
+progs = wavinfo wavvol wavnorm wavrev wavecho wavwide wavcat wavmix wavabs
+objs = acesso.o tratamento.o wavinfo.o wavvol.o wavnorm.o wavrev.o wavecho.o wavwide.o wavcat.o wavmix.o wavabs.o
 
 all: $(progs)
 
@@ -15,6 +15,8 @@ wavwide: acesso.o tratamento.o wavwide.o
 wavcat : acesso.o tratamento.o wavcat.o 
 wavmix : acesso.o tratamento.o wavmix.o 
 
+wavabs : acesso.o tratamento.o wavabs.o 
+
 acesso.o: estruturas.h acesso.c 
 tratamento.o: estruturas.h tratamento.c
 
@@ -26,6 +28,7 @@ wavecho.o: wavecho.c
 wavwide.o: wavwide.c
 wavcat.o : wavcat.c
 wavmix.o : wavmix.c
+wavabs.o : wavabs.c
 
 clean:
 	rm $(objs)

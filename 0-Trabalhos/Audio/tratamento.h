@@ -40,6 +40,9 @@ void concatatenar_audios(Audio_t *audioA, Audio_t *audioB);
 // Retorna a mixagem nas duas músicas na audioA
 void mixar_audios(Audio_t *audioA, Audio_t *audioB);
 
+// Retorna o audio apenas com valores positivos
+void abs_audio(Audio_t *audio);
+
 // Fecha os arquivos de streams
 void fechar_streams(FILE *ENTRADA, FILE *SAIDA);
 

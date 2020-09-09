@@ -210,6 +210,11 @@ void mixar_audios(Audio_t *audioA, Audio_t *audioB)
 		audioA->dados[i] = soma_com_limite(audioA->dados[i], audioB->dados[i], VOLMAX);
 }
 
+void abs_audio(Audio_t *audio)
+{
+	for (int i = 0; i < audio->tamanho; i++)
+       audio->dados[i] = abs(audio->dados[i]);
+}
 
 void fechar_streams(FILE *ENTRADA, FILE *SAIDA)
 {
